@@ -7,9 +7,9 @@ import pickle
 import qEKF
 from pyquaternion import Quaternion
 m = pickle.load(open("save.p", "rb"))
-fused = qEKF.fuse(m.s.p, m.s.c, Quaternion(.5,.5,.5,-.5))
+fused = qEKF.fuse(m.s.p, m.s.ori, Quaternion(.5,.5,.5,-.5))
 
-q_fix_1 = Quaternion([-0.241, 0.724 ,-0.631, -0.139])
+q_fix_1 = Quaternion([0.155,-0.735,-0.190,0.632])
 
 fig = plt.figure()
 ax = fig.add_axes([0, 0, 1, 1], projection='3d')
@@ -25,9 +25,9 @@ startpoints = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0], [
 endpoints = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1],
                       [1, 0, 0], [0, 1, 0], [0, 0, 1]])
 
-ax.set_xlim((-8, 8))
-ax.set_ylim((-8, 8))
-ax.set_zlim((-8, 8))
+ax.set_xlim((-3,3))
+ax.set_ylim((-3,3))
+ax.set_zlim((-3,3))
 
 ax.view_init(30, 0)
 
@@ -43,7 +43,7 @@ def init():
     return lines
 
 def animate(i):
-	q1 = fused[i]*q_fix_1
+	q1 = fused[i] #*q_fix_1
 	q2 = m.s.ori[i]
 	qN=0
 	for line, start, end in zip(lines, startpoints, endpoints):
@@ -54,10 +54,10 @@ def animate(i):
 
 			start = q2.rotate(start)
 			end = q2.rotate(end)
+
 		line.set_data([start[0], end[0]], [start[1], end[1]])
 		line.set_3d_properties([start[2], end[2]])
 		qN += 1
-	print(q1/q2)
 	fig.canvas.draw()
 	return lines
 
