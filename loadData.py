@@ -2,7 +2,7 @@ from oct2py import octave
 import numpy as np
 from pyquaternion import Quaternion
 from LoadedData import LoadedData
-
+import pickle
 def fixNan(A):
 	i=0
 	while(i<len(A)):
@@ -75,17 +75,17 @@ def loadData():
 	out.N=7479
 	out.Hz = 75
 	# shoulder
-	i_s_acc = octave.eval("imu.shoulder.right.acc;")
+	i_s_acc = -octave.eval("imu.shoulder.right.acc;")
 	i_s_gyr = octave.eval("imu.shoulder.right.gyr;")
 	i_s_mag = octave.eval("imu.shoulder.right.mag;")
 	
 	# upper arm
-	i_u_acc = octave.eval("imu.upper_arm.right.acc;")
+	i_u_acc = -octave.eval("imu.upper_arm.right.acc;")
 	i_u_gyr = octave.eval("imu.upper_arm.right.gyr;")
 	i_u_mag = octave.eval("imu.upper_arm.right.mag;")
 
 	# forearm
-	i_f_acc = octave.eval("imu.forearm.right.acc;")
+	i_f_acc = -octave.eval("imu.forearm.right.acc;")
 	i_f_gyr = octave.eval("imu.forearm.right.gyr;")
 	i_f_mag = octave.eval("imu.forearm.right.mag;")
 
@@ -140,3 +140,8 @@ def loadData():
 	out.f.c = quatFromAccMag(i_f_acc, i_f_mag)
 	out.f.pos = han
 	out.f.ori = han_q
+
+	return out
+
+
+pickle.dump(loadData(), open("save.p", "wb"))
